@@ -838,6 +838,10 @@ export default class Bridge extends Extension {
                 interviewing: device.zh.interviewState === InterviewState.InProgress,
                 interview_completed: device.zh.interviewState === InterviewState.Successful,
                 interview_state: device.zh.interviewState,
+                // New interview metadata (backwards compatible - old frontends ignore these)
+                interview_completed_at: device.zh.meta.interviewCompletedAt as number | undefined,
+                interview_assumed: device.zh.meta.interviewAssumed as boolean | undefined,
+                interview_assumed_reason: device.zh.meta.interviewAssumedReason as string | undefined,
                 manufacturer: device.zh.manufacturerName,
                 endpoints,
             });

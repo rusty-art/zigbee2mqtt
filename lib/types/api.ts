@@ -249,6 +249,12 @@ export interface Zigbee2MQTTDevice {
     interviewing: boolean;
     interview_completed: boolean;
     interview_state: zigbeeHerdsman.Models.Device["interviewState"];
+    /** Timestamp (ms since epoch) when interview completed */
+    interview_completed_at?: number;
+    /** True if interview success was assumed (device timed out but we have cached data) */
+    interview_assumed?: boolean;
+    /** Reason for assumed interview (e.g., timeout message) */
+    interview_assumed_reason?: string;
     manufacturer: zigbeeHerdsman.Models.Device["manufacturerName"];
     endpoints: Record<number, Zigbee2MQTTDeviceEndpoint>;
 }
