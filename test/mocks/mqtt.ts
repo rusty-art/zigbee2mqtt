@@ -2,7 +2,25 @@ import type {IClientPublishOptions} from "mqtt";
 
 import type {EventHandler} from "./utils";
 
-export const events: Record<string, EventHandler> = {};
+// Wrapper for events that provides the necessary MQTT packet structure
+const rawEvents: Record<string, EventHandler> = {};
+export const events: Record<string, EventHandler> = new Proxy(rawEvents, {
+    get(target, prop) {
+        const handler = target[prop as string];
+        if (prop === "message" && handler) {
+            // Wrap message handler to provide default packet with qos
+            return (topic: string, message: string | Buffer, packet?: {qos?: number}) => {
+                const defaultPacket = {qos: packet?.qos ?? 0};
+                return handler(topic, typeof message === "string" ? Buffer.from(message) : message, defaultPacket);
+            };
+        }
+        return handler;
+    },
+    set(target, prop, value) {
+        target[prop as string] = value;
+        return true;
+    },
+});
 
 export const mockMQTTPublishAsync = vi.fn(async (_topic: string, _message: string, _opts?: IClientPublishOptions): Promise<void> => {});
 export const mockMQTTEndAsync = vi.fn(async (): Promise<void> => {});
